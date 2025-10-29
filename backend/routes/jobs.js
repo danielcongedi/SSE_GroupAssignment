@@ -72,9 +72,11 @@ router.get("/available", authMiddleware(["serviceProvider"]), async (req, res) =
   }
 });
 
-// Service provider accepts a job
+//  Service provider accepts a job
 router.put("/accept/:jobId", authMiddleware(["serviceProvider"]), async (req, res) => {
   try {
+    console.log('🔐 Accepting job:', req.params.jobId, 'by provider:', req.user.userId);
+    
     const job = await Job.findByIdAndUpdate(
       req.params.jobId,
       { 
@@ -88,9 +90,30 @@ router.put("/accept/:jobId", authMiddleware(["serviceProvider"]), async (req, re
       return res.status(404).json({ message: "Job not found" });
     }
     
+    console.log('✅ Job accepted successfully:', job._id);
     res.status(200).json({ message: "Job accepted successfully", job });
   } catch (error) {
+    console.error('❌ Error accepting job:', error);
     res.status(500).json({ message: "Error accepting job" });
+  }
+});
+
+// Get service provider's accepted jobs
+router.get("/provider/my-jobs", authMiddleware(["serviceProvider"]), async (req, res) => {
+  try {
+    console.log('🔐 Fetching provider jobs for user:', req.user.userId);
+    
+    const jobs = await Job.find({ 
+      serviceProviderId: req.user.userId 
+    })
+    .populate('clientId', 'name email')
+    .sort({ createdAt: -1 });
+    
+    console.log('✅ Found provider jobs:', jobs.length);
+    res.status(200).json({ jobs });
+  } catch (error) {
+    console.error('❌ Error fetching provider jobs:', error);
+    res.status(500).json({ message: "Error fetching your jobs" });
   }
 });
 

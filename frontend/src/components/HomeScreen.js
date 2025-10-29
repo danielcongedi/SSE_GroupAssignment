@@ -25,42 +25,84 @@ export default function HomeScreen() {
   };
 
   // ✅ Load user's jobs (for clients) or accepted jobs (for providers)
+  // const loadJobs = async () => {
+  //   try {
+  //     setLoading(true);
+  //     const token = sessionStorage.getItem("token");
+  //     const userId = sessionStorage.getItem("userId");
+  //     const userRole = sessionStorage.getItem("userRole");
+
+  //     if (!userId) {
+  //       console.error('No userId found in sessionStorage');
+  //       navigate('/login');
+  //       return;
+  //     }
+
+  //     let endpoint;
+  //     if (userRole === 'client') {
+  //       endpoint = `http://localhost:3001/api/jobs/client/${userId}`;
+  //     } else {
+  //       // For providers, show jobs they've accepted
+  //       endpoint = `http://localhost:3001/api/jobs/provider/my-jobs`;
+  //     }
+
+  //     const response = await axios.get(endpoint, {
+  //       headers: { Authorization: `Bearer ${token}` }
+  //     });
+
+  //     setJobs(response.data.jobs);
+  //   } catch (error) {
+  //     console.log("Error fetching jobs:", error);
+  //     if (error.response?.status === 403) {
+  //       alert('Session expired. Please login again.');
+  //       navigate('/login');
+  //     }
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
+
   const loadJobs = async () => {
-    try {
-      setLoading(true);
-      const token = sessionStorage.getItem("token");
-      const userId = sessionStorage.getItem("userId");
-      const userRole = sessionStorage.getItem("userRole");
+  try {
+    setLoading(true);
+    const token = sessionStorage.getItem("token");
+    const userId = sessionStorage.getItem("userId");
+    const userRole = sessionStorage.getItem("userRole");
 
-      if (!userId) {
-        console.error('No userId found in sessionStorage');
-        navigate('/login');
-        return;
-      }
-
-      let endpoint;
-      if (userRole === 'client') {
-        endpoint = `http://localhost:3001/api/jobs/client/${userId}`;
-      } else {
-        // For providers, show jobs they've accepted
-        endpoint = `http://localhost:3001/api/jobs/provider/my-jobs`;
-      }
-
-      const response = await axios.get(endpoint, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-
-      setJobs(response.data.jobs);
-    } catch (error) {
-      console.log("Error fetching jobs:", error);
-      if (error.response?.status === 403) {
-        alert('Session expired. Please login again.');
-        navigate('/login');
-      }
-    } finally {
-      setLoading(false);
+    if (!userId) {
+      console.error('No userId found in sessionStorage');
+      navigate('/login');
+      return;
     }
-  };
+
+    let endpoint;
+    if (userRole === 'client') {
+      endpoint = `http://localhost:3001/api/jobs/client/${userId}`;
+    } else {
+      // For providers, show jobs they've accepted
+      endpoint = `http://localhost:3001/api/jobs/provider/my-jobs`;
+    }
+
+    console.log('🔍 Loading jobs from endpoint:', endpoint);
+    
+    const response = await axios.get(endpoint, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+
+    console.log('✅ Jobs loaded:', response.data.jobs);
+    setJobs(response.data.jobs);
+  } catch (error) {
+    console.log("❌ Error fetching jobs:", error);
+    console.log("❌ Error details:", error.response?.data);
+    if (error.response?.status === 403) {
+      alert('Session expired. Please login again.');
+      navigate('/login');
+    }
+  } finally {
+    setLoading(false);
+  }
+};
 
   // ✅ Load available jobs for service providers
   const loadAvailableJobs = async () => {
@@ -213,7 +255,7 @@ export default function HomeScreen() {
           onClick={() => completeJob(item._id)}
           className="complete-btn"
         >
-          Mark as Completed ✅
+          Mark as Completed
         </button>
       )}
     </div>
