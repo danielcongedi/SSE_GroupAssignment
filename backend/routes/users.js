@@ -36,8 +36,9 @@ router.post('/login', async (req, res) => {
     // ✅ FIX: Return ALL required fields
     res.json({ 
       token, 
-      userId: user._id.toString(), // Add this
-      role: user.role // Add this
+      userId: user._id.toString(),
+      role: user.role,
+      name: user.name
     });
     
   } catch (error) {

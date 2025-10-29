@@ -60,6 +60,7 @@ export default function LoginScreen() {
     sessionStorage.setItem('token', response.data.token);
     sessionStorage.setItem('userId', response.data.userId);
     sessionStorage.setItem('userRole', response.data.role);
+    sessionStorage.setItem('userName', response.data.name);
     
     console.log('✅ Stored in sessionStorage:', {
       token: sessionStorage.getItem('token') ? 'OK' : 'FAILED',

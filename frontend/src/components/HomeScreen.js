@@ -111,8 +111,8 @@ export default function HomeScreen() {
         }
       );
 
-      console.log('✅ Job creation response:', response.data);
-      alert("Service request submitted ✅");
+      console.log('Job creation response:', response.data);
+      alert("Service request submitted ");
       
       // Reset form
       setServiceCategory("");
@@ -182,13 +182,14 @@ export default function HomeScreen() {
     const token = sessionStorage.getItem("token");
     const userId = sessionStorage.getItem("userId");
     const userRole = sessionStorage.getItem("userRole");
+    const userName = sessionStorage.getItem("userName");
     
     if (!token || !userId) {
       navigate("/login");
       return;
     }
     
-    setUser({ userId, role: userRole });
+    setUser({ userId, role: userRole, name: userName });
     loadJobs();
     
     // Load available jobs if user is a service provider
@@ -247,7 +248,7 @@ export default function HomeScreen() {
           <h1>Home Services 🛠</h1>
           {user && (
             <p className="user-info">
-              Welcome, {user.role === 'client' ? 'Client' : 'Service Provider'} 
+              Welcome, {user.name}
             </p>
           )}
         </div>
