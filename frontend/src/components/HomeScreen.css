@@ -214,3 +214,56 @@
 .available-jobs {
   margin-bottom: 30px;
 }
+
+.job-actions {
+  margin-top: 15px;
+  padding-top: 15px;
+  border-top: 1px solid #eee;
+}
+
+.client-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.action-btn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.complete-btn {
+  background: #0F9D58;
+  color: white;
+}
+
+.complete-btn:hover {
+  background: #0a7e48;
+}
+
+.cancel-btn {
+  background: #DB4437;
+  color: white;
+}
+
+.cancel-btn:hover {
+  background: #c23321;
+}
+
+.edit-btn {
+  background: #F4B400;
+  color: white;
+}
+
+.edit-btn:hover {
+  background: #dba300;
+}
+
+.status-cancelled {
+  color: #DB4437;
+  font-weight: bold;
+}

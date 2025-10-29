@@ -24,45 +24,7 @@ export default function HomeScreen() {
     "Other": ["Gardening & Landscaping", "Pet Care", "IT Support"]
   };
 
-  // ✅ Load user's jobs (for clients) or accepted jobs (for providers)
-  // const loadJobs = async () => {
-  //   try {
-  //     setLoading(true);
-  //     const token = sessionStorage.getItem("token");
-  //     const userId = sessionStorage.getItem("userId");
-  //     const userRole = sessionStorage.getItem("userRole");
-
-  //     if (!userId) {
-  //       console.error('No userId found in sessionStorage');
-  //       navigate('/login');
-  //       return;
-  //     }
-
-  //     let endpoint;
-  //     if (userRole === 'client') {
-  //       endpoint = `http://localhost:3001/api/jobs/client/${userId}`;
-  //     } else {
-  //       // For providers, show jobs they've accepted
-  //       endpoint = `http://localhost:3001/api/jobs/provider/my-jobs`;
-  //     }
-
-  //     const response = await axios.get(endpoint, {
-  //       headers: { Authorization: `Bearer ${token}` }
-  //     });
-
-  //     setJobs(response.data.jobs);
-  //   } catch (error) {
-  //     console.log("Error fetching jobs:", error);
-  //     if (error.response?.status === 403) {
-  //       alert('Session expired. Please login again.');
-  //       navigate('/login');
-  //     }
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-
-
+//load jobs for the logged-in user
   const loadJobs = async () => {
   try {
     setLoading(true);
@@ -220,6 +182,97 @@ export default function HomeScreen() {
     }
   };
 
+  // ✅ Update job status (for service providers)
+  const updateJobStatus = async (jobId, newStatus) => {
+    try {
+      const token = sessionStorage.getItem("token");
+      const userRole = sessionStorage.getItem("userRole");
+
+      if (userRole !== 'serviceProvider') {
+        alert('Only service providers can update job status');
+        return;
+      }
+
+      const response = await axios.put(
+        `http://localhost:3001/api/jobs/update/${jobId}`,
+        { status: newStatus },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      console.log('✅ Job status updated:', response.data);
+      alert(`Job status updated to ${newStatus}`);
+      
+      // Refresh jobs list
+      loadJobs();
+      if (userRole === 'serviceProvider') {
+        loadAvailableJobs();
+      }
+    } catch (error) {
+      console.log("❌ Error updating job status:", error);
+      alert(`Failed to update job: ${error.response?.data?.message || 'Unknown error'}`);
+    }
+  };
+
+  // ✅ Update job details (for clients)
+  const updateJobDetails = async (jobId, updates) => {
+    try {
+      const token = sessionStorage.getItem("token");
+      const userRole = sessionStorage.getItem("userRole");
+
+      if (userRole !== 'client') {
+        alert('Only clients can update job details');
+        return;
+      }
+
+      const response = await axios.put(
+        `http://localhost:3001/api/jobs/client/update/${jobId}`,
+        updates,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      console.log('✅ Job details updated:', response.data);
+      alert('Job updated successfully');
+      
+      // Refresh jobs list
+      loadJobs();
+    } catch (error) {
+      console.log("❌ Error updating job details:", error);
+      alert(`Failed to update job: ${error.response?.data?.message || 'Unknown error'}`);
+    }
+  };
+
+  // ✅ Cancel job (for clients)
+  const cancelJob = async (jobId) => {
+    try {
+      const token = sessionStorage.getItem("token");
+      const userRole = sessionStorage.getItem("userRole");
+
+      if (userRole !== 'client') {
+        alert('Only clients can cancel jobs');
+        return;
+      }
+
+      if (!window.confirm('Are you sure you want to cancel this job?')) {
+        return;
+      }
+
+      const response = await axios.put(
+        `http://localhost:3001/api/jobs/client/cancel/${jobId}`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      console.log('✅ Job cancelled:', response.data);
+      alert('Job cancelled successfully');
+      
+      // Refresh jobs list
+      loadJobs();
+    } catch (error) {
+      console.log("❌ Error cancelling job:", error);
+      alert(`Failed to cancel job: ${error.response?.data?.message || 'Unknown error'}`);
+    }
+  };
+
   useEffect(() => {
     const token = sessionStorage.getItem("token");
     const userId = sessionStorage.getItem("userId");
@@ -249,15 +302,47 @@ export default function HomeScreen() {
       <p><strong>Description:</strong> {item.description || "No description provided"}</p>
       <p><strong>Created:</strong> {new Date(item.createdAt).toLocaleDateString()}</p>
       
-      {/* Show complete button for providers on in-progress jobs */}
-      {user?.role === 'serviceProvider' && item.status === 'In Progress' && (
-        <button 
-          onClick={() => completeJob(item._id)}
-          className="complete-btn"
-        >
-          Mark as Completed
-        </button>
-      )}
+      {/* Action buttons based on user role and job status */}
+      <div className="job-actions">
+        {/* Service Provider Actions */}
+        {user?.role === 'serviceProvider' && item.status === 'In Progress' && (
+          <button 
+            onClick={() => updateJobStatus(item._id, 'Completed')}
+            className="action-btn complete-btn"
+          >
+            Mark as Completed
+          </button>
+        )}
+        
+        {/* Client Actions */}
+        {user?.role === 'client' && item.status === 'Pending' && (
+          <div className="client-actions">
+            <button 
+              onClick={() => cancelJob(item._id)}
+              className="action-btn cancel-btn"
+            >
+              Cancel Job ❌
+            </button>
+            <button 
+              onClick={() => {
+                // You can implement an edit modal here
+                const newDesc = prompt('Enter new description:', item.description);
+                if (newDesc !== null) {
+                  updateJobDetails(item._id, { description: newDesc });
+                }
+              }}
+              className="action-btn edit-btn"
+            >
+              Edit Description ✏️
+            </button>
+          </div>
+        )}
+        
+        {/* Show assigned provider for clients */}
+        {user?.role === 'client' && item.serviceProviderId && (
+          <p><strong>Assigned to:</strong> Service Provider</p>
+        )}
+      </div>
     </div>
   );
 
@@ -294,7 +379,7 @@ export default function HomeScreen() {
             </p>
           )}
         </div>
-        <button onClick={handleLogout} className="logout-btn">Logout 🚪</button>
+        <button onClick={handleLogout} className="logout-btn"> Logout </button>
       </header>
 
       <div className="main-content">
