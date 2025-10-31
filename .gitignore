@@ -1,5 +1,6 @@
 # ========================
 # Dependencies
 # ========================
-node_modules/
-*/node_modules/
+node_modules/        # ignores the root-level node_modules folder
+*/node_modules/      # ignores node_modules inside subdirectories
+.env                 # ignores the .env file in the root directory
