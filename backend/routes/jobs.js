@@ -26,18 +26,18 @@ router.post("/create", authMiddleware(), async (req, res) => {
     }
 
     const job = new Job({
-      clientId: req.user.userId,  // ✅ FIXED
+      clientId: req.user.userId,
       serviceCategory,
       serviceType,
       description
     });
 
     await job.save();
-    console.log('✅ Job created successfully:', job);
+    console.log(' Job created successfully:', job);
     res.status(201).json({ message: "Job created", job });
 
   } catch (error) {
-    console.error('❌ Error creating job:', error);
+    console.error(' Error creating job:', error);
     res.status(500).json({ message: "Error creating job" });
   }
 });
@@ -52,10 +52,10 @@ router.get("/client/:clientId", authMiddleware(), async (req, res) => {
     }
 
     const jobs = await Job.find({ clientId: req.params.clientId }).sort({ createdAt: -1 });
-    console.log('✅ Found jobs:', jobs.length);
+    console.log(' Found jobs:', jobs.length);
     res.status(200).json({ jobs });
   } catch (error) {
-    console.error('❌ Error fetching jobs:', error);
+    console.error(' Error fetching jobs:', error);
     res.status(500).json({ message: "Error fetching jobs" });
   }
 });
@@ -90,10 +90,10 @@ router.put("/accept/:jobId", authMiddleware(["serviceProvider"]), async (req, re
       return res.status(404).json({ message: "Job not found" });
     }
     
-    console.log('✅ Job accepted successfully:', job._id);
+    console.log(' Job accepted successfully:', job._id);
     res.status(200).json({ message: "Job accepted successfully", job });
   } catch (error) {
-    console.error('❌ Error accepting job:', error);
+    console.error(' Error accepting job:', error);
     res.status(500).json({ message: "Error accepting job" });
   }
 });
@@ -109,15 +109,15 @@ router.get("/provider/my-jobs", authMiddleware(["serviceProvider"]), async (req,
     .populate('clientId', 'name email')
     .sort({ createdAt: -1 });
     
-    console.log('✅ Found provider jobs:', jobs.length);
+    console.log(' Found provider jobs:', jobs.length);
     res.status(200).json({ jobs });
   } catch (error) {
-    console.error('❌ Error fetching provider jobs:', error);
+    console.error(' Error fetching provider jobs:', error);
     res.status(500).json({ message: "Error fetching your jobs" });
   }
 });
 
-// ✅ Update job status - For Service Providers
+//  Update job status - For Service Providers
 router.put("/update/:jobId", authMiddleware(["serviceProvider"]), async (req, res) => {
   try {
     const { status } = req.body;
@@ -148,19 +148,19 @@ router.put("/update/:jobId", authMiddleware(["serviceProvider"]), async (req, re
       { new: true }
     ).populate('clientId', 'name email');
 
-    console.log('✅ Job status updated successfully');
+    console.log(' Job status updated successfully');
     res.status(200).json({ 
       message: "Job status updated successfully", 
       job: updatedJob 
     });
 
   } catch (error) {
-    console.error('❌ Error updating job:', error);
+    console.error(' Error updating job:', error);
     res.status(500).json({ message: "Error updating job" });
   }
 });
 
-// ✅ Update job details - For Clients (update their own jobs)
+//  Update job details - For Clients (update their own jobs)
 router.put("/client/update/:jobId", authMiddleware(["client"]), async (req, res) => {
   try {
     const { serviceCategory, serviceType, description } = req.body;
@@ -216,19 +216,19 @@ router.put("/client/update/:jobId", authMiddleware(["client"]), async (req, res)
       { new: true }
     ).populate('clientId', 'name email');
 
-    console.log('✅ Job details updated successfully');
+    console.log(' Job details updated successfully');
     res.status(200).json({ 
       message: "Job updated successfully", 
       job: updatedJob 
     });
 
   } catch (error) {
-    console.error('❌ Error updating job:', error);
+    console.error(' Error updating job:', error);
     res.status(500).json({ message: "Error updating job" });
   }
 });
 
-// ✅ Cancel job - For Clients
+//  Cancel job - For Clients
 router.put("/client/cancel/:jobId", authMiddleware(["client"]), async (req, res) => {
   try {
     const { jobId } = req.params;
@@ -257,14 +257,14 @@ router.put("/client/cancel/:jobId", authMiddleware(["client"]), async (req, res)
       { new: true }
     );
 
-    console.log('✅ Job cancelled successfully');
+    console.log(' Job cancelled successfully');
     res.status(200).json({ 
       message: "Job cancelled successfully", 
       job: updatedJob 
     });
 
   } catch (error) {
-    console.error('❌ Error cancelling job:', error);
+    console.error(' Error cancelling job:', error);
     res.status(500).json({ message: "Error cancelling job" });
   }
 });

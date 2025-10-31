@@ -28,7 +28,7 @@ export default function LoginScreen() {
       
   //     console.log('Login response:', response.data);
       
-  //     // ✅ Use sessionStorage instead of localStorage
+  //     //  Use sessionStorage instead of localStorage
   //     sessionStorage.setItem('token', response.data.token);
   //     sessionStorage.setItem('userId', response.data.userId);
   //     sessionStorage.setItem('userRole', response.data.role);
@@ -54,7 +54,7 @@ export default function LoginScreen() {
       password 
     });
     
-    console.log('✅ Login response:', response.data);
+    console.log(' Login response:', response.data);
     
     // Store in sessionStorage - backend now provides all fields
     sessionStorage.setItem('token', response.data.token);
@@ -62,7 +62,7 @@ export default function LoginScreen() {
     sessionStorage.setItem('userRole', response.data.role);
     sessionStorage.setItem('userName', response.data.name);
     
-    console.log('✅ Stored in sessionStorage:', {
+    console.log(' Stored in sessionStorage:', {
       token: sessionStorage.getItem('token') ? 'OK' : 'FAILED',
       userId: sessionStorage.getItem('userId'),
       role: sessionStorage.getItem('userRole')
@@ -71,7 +71,7 @@ export default function LoginScreen() {
     navigate('/');
   } catch (err) {
     setError(err.response?.data?.message || 'Invalid email or password');
-    console.error('❌ Login error:', err);
+    console.error(' Login error:', err);
   } finally {
     setIsLoading(false);
   }

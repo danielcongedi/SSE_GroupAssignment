@@ -52,11 +52,11 @@ export default function HomeScreen() {
       headers: { Authorization: `Bearer ${token}` }
     });
 
-    console.log('✅ Jobs loaded:', response.data.jobs);
+    console.log(' Jobs loaded:', response.data.jobs);
     setJobs(response.data.jobs);
   } catch (error) {
-    console.log("❌ Error fetching jobs:", error);
-    console.log("❌ Error details:", error.response?.data);
+    console.log(" Error fetching jobs:", error);
+    console.log(" Error details:", error.response?.data);
     if (error.response?.status === 403) {
       alert('Session expired. Please login again.');
       navigate('/login');
@@ -66,7 +66,7 @@ export default function HomeScreen() {
   }
 };
 
-  // ✅ Load available jobs for service providers
+  //  Load available jobs for service providers
   const loadAvailableJobs = async () => {
     try {
       const token = sessionStorage.getItem("token");
@@ -80,7 +80,7 @@ export default function HomeScreen() {
     }
   };
 
-  // ✅ Create Job (for clients only)
+  //  Create Job (for clients only)
   const createJob = async () => {
     if (!serviceCategory || !serviceType) {
       alert("Please choose a service category and type");
@@ -127,8 +127,8 @@ export default function HomeScreen() {
       loadJobs();
 
     } catch (error) {
-      console.log("❌ Job creation failed:", error);
-      console.log("❌ Error response:", error.response?.data);
+      console.log(" Job creation failed:", error);
+      console.log(" Error response:", error.response?.data);
       
       if (error.code === 'ECONNABORTED') {
         alert('Request timeout - backend might be down');
@@ -142,7 +142,7 @@ export default function HomeScreen() {
     }
   };
 
-  // ✅ Accept a job as a service provider
+  //  Accept a job as a service provider
   const acceptJob = async (jobId) => {
     try {
       const token = sessionStorage.getItem("token");
@@ -152,7 +152,7 @@ export default function HomeScreen() {
         { headers: { Authorization: `Bearer ${token}` } }
       );
       
-      console.log('✅ Job accepted:', response.data);
+      console.log(' Job accepted:', response.data);
       alert("Job accepted successfully!");
       
       // Refresh both job lists
@@ -164,7 +164,7 @@ export default function HomeScreen() {
     }
   };
 
-  // ✅ Complete a job as a service provider
+  //  Complete a job as a service provider
   const completeJob = async (jobId) => {
     try {
       const token = sessionStorage.getItem("token");
@@ -182,7 +182,7 @@ export default function HomeScreen() {
     }
   };
 
-  // ✅ Update job status (for service providers)
+  //  Update job status (for service providers)
   const updateJobStatus = async (jobId, newStatus) => {
     try {
       const token = sessionStorage.getItem("token");
@@ -199,7 +199,7 @@ export default function HomeScreen() {
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      console.log('✅ Job status updated:', response.data);
+      console.log(' Job status updated:', response.data);
       alert(`Job status updated to ${newStatus}`);
       
       // Refresh jobs list
@@ -208,12 +208,12 @@ export default function HomeScreen() {
         loadAvailableJobs();
       }
     } catch (error) {
-      console.log("❌ Error updating job status:", error);
+      console.log(" Error updating job status:", error);
       alert(`Failed to update job: ${error.response?.data?.message || 'Unknown error'}`);
     }
   };
 
-  // ✅ Update job details (for clients)
+  //  Update job details (for clients)
   const updateJobDetails = async (jobId, updates) => {
     try {
       const token = sessionStorage.getItem("token");
@@ -230,18 +230,18 @@ export default function HomeScreen() {
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      console.log('✅ Job details updated:', response.data);
+      console.log(' Job details updated:', response.data);
       alert('Job updated successfully');
       
       // Refresh jobs list
       loadJobs();
     } catch (error) {
-      console.log("❌ Error updating job details:", error);
+      console.log(" Error updating job details:", error);
       alert(`Failed to update job: ${error.response?.data?.message || 'Unknown error'}`);
     }
   };
 
-  // ✅ Cancel job (for clients)
+  //  Cancel job (for clients)
   const cancelJob = async (jobId) => {
     try {
       const token = sessionStorage.getItem("token");
@@ -262,13 +262,13 @@ export default function HomeScreen() {
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      console.log('✅ Job cancelled:', response.data);
+      console.log(' Job cancelled:', response.data);
       alert('Job cancelled successfully');
       
       // Refresh jobs list
       loadJobs();
     } catch (error) {
-      console.log("❌ Error cancelling job:", error);
+      console.log(" Error cancelling job:", error);
       alert(`Failed to cancel job: ${error.response?.data?.message || 'Unknown error'}`);
     }
   };
@@ -293,7 +293,7 @@ export default function HomeScreen() {
     }
   }, [navigate]);
 
-  // ✅ Render job card with appropriate actions
+  //  Render job card with appropriate actions
   const renderJob = (item) => (
     <div key={item._id} className="job-card">
       <h4>📌 {item.serviceType}</h4>
@@ -321,7 +321,7 @@ export default function HomeScreen() {
               onClick={() => cancelJob(item._id)}
               className="action-btn cancel-btn"
             >
-              Cancel Job ❌
+              Cancel Job 
             </button>
             <button 
               onClick={() => {
@@ -346,7 +346,7 @@ export default function HomeScreen() {
     </div>
   );
 
-  // ✅ Render available job card for providers
+  //  Render available job card for providers
   const renderAvailableJob = (item) => (
     <div key={item._id} className="job-card available">
       <h4>📌 {item.serviceType}</h4>
@@ -358,7 +358,7 @@ export default function HomeScreen() {
         onClick={() => acceptJob(item._id)}
         className="accept-btn"
       >
-        Accept Job ✅
+        Accept Job 
       </button>
     </div>
   );
@@ -435,7 +435,7 @@ export default function HomeScreen() {
             </div>
 
             <button onClick={createJob} className="submit-btn">
-              Submit Request ✅
+              Submit Request 
             </button>
           </section>
         )}
